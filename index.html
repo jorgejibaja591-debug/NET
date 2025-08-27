@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameZone - Tienda de Juegos Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+            background: linear-gradient(45deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0.7rem 1.2rem;
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-links a:hover::before {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-3px);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .cart-icon {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .cart-icon:hover {
+            background: linear-gradient(45deg, #ee5a5a, #ff7b7b);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #fff;
+            color: #ff6b6b;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 2px solid #ff6b6b;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 100px;
+            padding: 2rem 0;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Search */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 400px;
+            padding: 1rem;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Games Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .game-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .game-info {
+            padding: 1.5rem;
+        }
+
+        .game-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .game-category {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-description {
+            color: #555;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+        }
+
+        .game-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #ffd700;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .add-to-cart:active {
+            transform: translateY(0);
+        }
+
+        /* Cart Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-total {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 1rem;
+            color: #667eea;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background: #45b7b8;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: rgba(102, 126, 234, 0.95);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                gap: 0;
+                padding: 1rem 0;
+                transform: translateY(-100vh);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                transform: translateY(0);
+            }
+
+            .nav-links a {
+                padding: 1rem 2rem;
+                width: 100%;
+                text-align: center;
+                border-radius: 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-links a:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .logo {
+                font-size: 1.8rem;
+            }
+            
+            .cart-icon {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .filters {
+                gap: 0.5rem;
+            }
+            
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            main {
+                margin-top: 90px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav {
+                padding: 0 15px;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .cart-icon {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .game-card {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .no-results {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin: 3rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🎮 GameZone</div>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#juegos">Juegos</a></li>
+                <li><a href="#ofertas">Ofertas</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+                <a href="#" class="cart-icon" id="cart-btn">
+                    🛒 Carrito
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h1>¡Los Mejores Juegos Online!</h1>
+            <p>Descubre, compra y juega los títulos más populares del momento</p>
+        </section>
+
+        <section class="search-container">
+            <input type="text" class="search-box" id="search-box" placeholder="Buscar juegos...">
+        </section>
+
+        <section class="filters">
+            <button class="filter-btn active" data-category="all">Todos</button>
+            <button class="filter-btn" data-category="accion">Acción</button>
+            <button class="filter-btn" data-category="aventura">Aventura</button>
+            <button class="filter-btn" data-category="estrategia">Estrategia</button>
+            <button class="filter-btn" data-category="deportes">Deportes</button>
+            <button class="filter-btn" data-category="rpg">RPG</button>
+        </section>
+
+        <section class="games-grid" id="games-grid">
+            <!-- Los juegos se cargarán aquí dinámicamente -->
+        </section>
+    </main>
+
+    <!-- Modal del Carrito -->
+    <div class="modal" id="cart-modal">
+        <div class="modal-content">
+            <span class="close" id="close-modal">&times;</span>
+            <h2>🛒 Tu Carrito</h2>
+            <div id="cart-items"></div>
+            <div class="cart-total" id="cart-total">Total: $0</div>
+            <button class="checkout-btn" id="checkout-btn">Proceder al Pago</button>
+        </div>
+    </div>
+
+    <script>
+        // Array de juegos - Base de datos
+        const games = [
+            {
+                id: 1,
+                title: "Cyber Legends 2077",
+                category: "accion",
+                price: 59.99,
+                rating: 4.8,
+                description: "Un épico juego de acción futurista con gráficos impresionantes",
+                icon: "🤖"
+            },
+            {
+                id: 2,
+                title: "Fantasy Quest Online",
+                category: "rpg",
+                price: 49.99,
+                rating: 4.7,
+                description: "Aventúrate en un mundo mágico lleno de criaturas fantásticas",
+                icon: "🧙‍♂️"
+            },
+            {
+                id: 3,
+                title: "Speed Racing Ultimate",
+                category: "deportes",
+                price: 39.99,
+                rating: 4.5,
+                description: "La experiencia de carreras más realista que jamás hayas vivido",
+                icon: "🏎️"
+            },
+            {
+                id: 4,
+                title: "Medieval Kingdoms",
+                category: "estrategia",
+                price: 44.99,
+                rating: 4.6,
+                description: "Construye tu imperio y conquista territorios en este juego de estrategia",
+                icon: "🏰"
+            },
+            {
+                id: 5,
+                title: "Space Explorer",
+                category: "aventura",
+                price: 34.99,
+                rating: 4.4,
+                description: "Explora galaxias lejanas y descubre nuevos mundos",
+                icon: "🚀"
+            },
+            {
+                id: 6,
+                title: "Battle Royale Pro",
+                category: "accion",
+                price: 29.99,
+                rating: 4.9,
+                description: "Sobrevive hasta el final en este intenso battle royale",
+                icon: "⚔️"
+            },
+            {
+                id: 7,
+                title: "Mystic Adventures",
+                category: "aventura",
+                price: 42.99,
+                rating: 4.3,
+                description: "Resuelve misterios ancestrales en esta aventura única",
+                icon: "🔮"
+            },
+            {
+                id: 8,
+                title: "Football Manager 2024",
+                category: "deportes",
+                price: 54.99,
+                rating: 4.7,
+                description: "Dirige tu equipo favorito hacia la gloria",
+                icon: "⚽"
+            },
+            {
+                id: 9,
+                title: "Dragon's Realm",
+                category: "rpg",
+                price: 47.99,
+                rating: 4.8,
+                description: "Conviértete en el héroe que salvará el reino de los dragones",
+                icon: "🐉"
+            },
+            {
+                id: 10,
+                title: "City Builder Deluxe",
+                category: "estrategia",
+                price: 36.99,
+                rating: 4.5,
+                description: "Construye y administra la ciudad de tus sueños",
+                icon: "🏙️"
+            }
+        ];
+
+        // Array del carrito
+        let cart = [];
+        let filteredGames = [...games];
+
+        // Elementos del DOM
+        const gamesGrid = document.getElementById('games-grid');
+        const searchBox = document.getElementById('search-box');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const cartBtn = document.getElementById('cart-btn');
+        const cartModal = document.getElementById('cart-modal');
+        const closeModal = document.getElementById('close-modal');
+        const cartCount = document.getElementById('cart-count');
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const navLinks = document.getElementById('nav-links');
+
+        // Función para generar estrellas
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '⭐';
+            }
+            if (hasHalfStar) {
+                stars += '⭐';
+            }
+            
+            return stars;
+        }
+
+        // Función para renderizar juegos
+        function renderGames(gamesToRender) {
+            gamesGrid.innerHTML = '';
+            
+            if (gamesToRender.length === 0) {
+                gamesGrid.innerHTML = '<div class="no-results">No se encontraron juegos 😔</div>';
+                return;
+            }
+            
+            gamesToRender.forEach((game, index) => {
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                gameCard.style.animationDelay = `${index * 0.1}s`;
+                
+                gameCard.innerHTML = `
+                    <div class="game-image">
+                        ${game.icon}
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">${game.title}</h3>
+                        <p class="game-category">${game.category.charAt(0).toUpperCase() + game.category.slice(1)}</p>
+                        <p class="game-description">${game.description}</p>
+                        <div class="rating">
+                            <span class="stars">${generateStars(game.rating)}</span>
+                            <span>${game.rating}/5</span>
+                        </div>
+                        <div class="game-price">$${game.price}</div>
+                        <button class="add-to-cart" onclick="addToCart(${game.id})">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                `;
+                
+                gamesGrid.appendChild(gameCard);
+            });
+        }
+
+        // Función para agregar al carrito
+        function addToCart(gameId) {
+            const game = games.find(g => g.id === gameId);
+            const existingItem = cart.find(item => item.id === gameId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...game, quantity: 1 });
+            }
+            
+            updateCartCount();
+            
+            // Animación del botón
+            const button = event.target;
+            button.style.transform = 'scale(0.95)';
+            button.textContent = '¡Agregado!';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+                button.textContent = 'Agregar al Carrito';
+            }, 300);
+        }
+
+        // Función para actualizar contador del carrito
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+
+        // Función para renderizar carrito
+        function renderCart() {
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p>Tu carrito está vacío 🛒</p>';
+                cartTotal.textContent = 'Total: $0';
+                return;
+            }
+            
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div>
+                        <strong>${item.title}</strong><br>
+                        <small>$${item.price} x ${item.quantity}</small>
+                    </div>
+                    <div>
+                        <button onclick="removeFromCart(${item.id})" style="background: #ff6b6b; color: white; border: none; padding: 0.3rem 0.6rem; border-radius: 5px; cursor: pointer;">
+                            Eliminar
+                        </button>
+                    </div>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+            
+            cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        // Función para eliminar del carrito
+        function removeFromCart(gameId) {
+            cart = cart.filter(item => item.id !== gameId);
+            updateCartCount();
+            renderCart();
+        }
+
+        // Función para filtrar por categoría
+        function filterByCategory(category) {
+            if (category === 'all') {
+                filteredGames = [...games];
+            } else {
+                filteredGames = games.filter(game => game.category === category);
+            }
+            
+            // Aplicar también el filtro de búsqueda si existe
+            const searchTerm = searchBox.value.toLowerCase();
+            if (searchTerm) {
+                filteredGames = filteredGames.filter(game => 
+                    game.title.toLowerCase().includes(searchTerm) ||
+                    game.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            renderGames(filteredGames);
+        }
+
+        // Función para buscar juegos
+        function searchGames() {
+            const searchTerm = searchBox.value.toLowerCase();
+            const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
+            
+            let gamesToFilter = games;
+            if (activeCategory !== 'all') {
+                gamesToFilter = games.filter(game => game.category === activeCategory);
+            }
+            
+            if (searchTerm) {
+                filteredGames = gamesToFilter.filter(game => 
+                    game.title.toLowerCase().includes(searchTerm) ||
+                    game.description.toLowerCase().includes(searchTerm) ||
+                    game.category.toLowerCase().includes(searchTerm)
+                );
+            } else {
+                filteredGames = gamesToFilter;
+            }
+            
+            renderGames(filteredGames);
+        }
+
+        // Event Listeners
+        searchBox.addEventListener('input', searchGames);
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterByCategory(btn.dataset.category);
+            });
+        });
+
+        cartBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            cartModal.style.display = 'block';
+            renderCart();
+        });
+
+        closeModal.addEventListener('click', () => {
+            cartModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === cartModal) {
+                cartModal.style.display = 'none';
+            }
+        });
+
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) {
+                alert('Tu carrito está vacío');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            alert(`¡Gracias por tu compra! Total: ${total.toFixed(2)}\n\nEn breve recibirás un email con los detalles de tu pedido.`);
+            cart = [];
+            updateCartCount();
+            renderCart();
+            cartModal.style.display = 'none';
+        });
+
+        // Mobile menu toggle
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        navLinks.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A') {
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // Inicializar la página
+        renderGames(games);
+    </script>
+</body>
+</html>
